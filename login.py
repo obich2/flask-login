@@ -1,4 +1,4 @@
-from flask_login import LoginManager, login_user, login_required, logout_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask import Flask, redirect, render_template
 from data import db_session
 from data.users import User
@@ -13,9 +13,7 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    print(user_id)
     db_sess = db_session.create_session()
-    print(user_id)
     return db_sess.query(User).get(user_id)
 
 
@@ -28,6 +26,8 @@ def logout():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect('/authorized')
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
