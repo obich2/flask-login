@@ -137,6 +137,20 @@ def reqister():
     return render_template('register.html', title='Регистрация', form=form)
 
 
+@app.route('/jobs_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def news_delete(id):
+    db_sess = db_session.create_session()
+    jobs = db_sess.query(Jobs).filter(Jobs.id == id,
+                                      ).first()
+    if jobs:
+        db_sess.delete(jobs)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/authorized')
+
+
 if __name__ == '__main__':
     db_session.global_init("db/blogs.db")
     app.run(port=8080, host='127.0.0.1')
