@@ -17,11 +17,14 @@
 
     <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
     {% else %}
-        <!-- <p>
+        <p>
             <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
             <a class="btn btn-success" href="/login">Войти</a>
-        </p> -->
+        </p>
     {% endif %}
+    {% if current_user.is_authenticated %}
+    <a class="btn btn-secondary" href="/jobs" >Добавить новость</a>
+{% endif %}
 <span class="navbar-brand mb-1 p-1">Mars One</span>
 </nav>
 <h4><small class="text-black-50">И на Марсе будут яблони цвести!</small></h4>

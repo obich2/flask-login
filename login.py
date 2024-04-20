@@ -2,7 +2,9 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from flask import Flask, redirect, render_template
 from data import db_session
 from data.users import User
+from data.jobs import Jobs
 from forms.loginform import LoginForm
+from forms.job import JobsForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '9vTgySlnihdzBGrf'
@@ -44,7 +46,35 @@ def login():
 
 @app.route('/authorized', methods=['GET', 'POST'])
 def main():
-    return render_template('authorized.html')
+    db_sess = db_session.create_session()
+    jobs = db_sess.query(Jobs).all()
+    query = db_sess.query(User)
+    crew_members = []
+    for user in db_sess.query(User).all():
+        # crew_members.append((user.surname, user.name))
+        crew_members.append(user.name)
+
+    return render_template('jobs.html', jobs=jobs, crew=crew_members)
+
+
+@app.route('/add_jobs', methods=['GET', 'POST'])
+@login_required
+def add_jobs():
+    form = JobsForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        jobs = Jobs()
+        jobs.job = form.job.data
+        jobs.team_leader = form.team_leader.data
+        jobs.work_size = form.work_size.data
+        jobs.collaborators = form.collaborators.data
+        jobs.is_finished = form.is_finished.data
+        current_user.jobs.append(jobs)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect('/authorized')
+    return render_template('add_jobs.html', title='Добавление новости',
+                           form=form)
 
 
 if __name__ == '__main__':
