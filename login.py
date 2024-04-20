@@ -5,6 +5,7 @@ from data.users import User
 from data.jobs import Jobs
 from forms.loginform import LoginForm
 from forms.job import JobsForm
+from forms.registerform import RegisterForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '9vTgySlnihdzBGrf'
@@ -73,6 +74,31 @@ def add_jobs():
         return redirect('/authorized')
     return render_template('add_jobs.html', title='Добавление новости',
                            form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def reqister():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        if form.hashed_password.data != form.password_again.data:
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Пароли не совпадают")
+        db_sess = db_session.create_session()
+        if db_sess.query(User).filter(User.email == form.email.data).first():
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Такой пользователь уже есть")
+        user = User(
+            name=form.name.data,
+            surname=form.surname.data,
+            email=form.email.data,
+        )
+        user.set_password(form.hashed_password.data)
+        db_sess.add(user)
+        db_sess.commit()
+        return redirect('/login')
+    return render_template('register.html', title='Регистрация', form=form)
 
 
 if __name__ == '__main__':
