@@ -35,7 +35,6 @@ def login():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
-            print(form.remember_me.data)
             login_user(user, remember=form.remember_me.data)
             return redirect("/authorized")
         return render_template('login.html',
@@ -51,8 +50,7 @@ def main():
     query = db_sess.query(User)
     crew_members = []
     for user in db_sess.query(User).all():
-        # crew_members.append((user.surname, user.name))
-        crew_members.append(user.name)
+        crew_members.append((user.surname, user.name))
 
     return render_template('jobs.html', jobs=jobs, crew=crew_members)
 

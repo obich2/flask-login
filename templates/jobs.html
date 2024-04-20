@@ -16,7 +16,7 @@
       <tbody class="table-primary">
         <tr>
           <td>{{j.job}}</td>
-          <td>{{' '.join(crew[j.team_leader])}}</td>
+          <td>{{' '.join(crew[j.team_leader - 1])}}</td>
           <td>{{j.work_size}}</td>
           <td>{{j.collaborators}}</td>
             {% if j.is_finished%}
