@@ -27,6 +27,16 @@
         </tr>
       </tbody>
       </table>
+                {% if (current_user.is_authenticated and current_user == j.user) or current_user.id == 1 %}
+    <div>
+        <a href="/add_jobs/{{ j.id}}" class="btn btn-warning">
+            Изменить
+        </a>
+        <a href="/jobs_delete/{{ j.id}}" class="btn btn-danger">
+            Удалить
+        </a>
+    </div>
+                {% endif %}
     </div>
 
     {% endfor %}
